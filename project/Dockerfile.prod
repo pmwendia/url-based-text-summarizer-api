@@ -1,0 +1,44 @@
+#pull image
+FROM python:3.8.8-slim-buster
+
+#create directory
+RUN mkdir -p /home/app
+
+#create user
+RUN addgroup --system app && adduser --system --group app
+
+#create directories
+ENV HOME=/home/app
+ENV APP_HOME=/home/app/web
+RUN mkdir $APP_HOME
+WORKDIR $APP_HOME
+
+#environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV ENVIRONMENT prod
+ENV TESTING 0
+
+#dependencies
+RUN apt-get update \
+&& apt-get -y install netcat gcc postgresql \
+&& apt-get clean
+
+#python dependencies
+RUN pip install --upgrade pip
+COPY ./requirements.txt .
+RUN pip install wheel pyproject.toml
+RUN pip install -r requirements.txt
+RUN pip install "uvicorn[standard]==0.13.4"
+
+#add app
+COPY . .
+
+#chown all files to user
+RUN chown -R app:app $APP_HOME
+
+#change user
+USER app
+
+#run gunicorn
+CMD gunicorn --bind 0.0.0.0:$PORT app.main:app -k uvicorn.workers.UvicornWorker
