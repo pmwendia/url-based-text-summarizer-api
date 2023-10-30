@@ -25,8 +25,8 @@ COPY . .
 
 # add entrypoint.sh
 COPY ./entrypoint.sh .
-#USER root
-#RUN chmod +x /usr/src/app/entrypoint.sh
+USER root
+RUN chmod +x /usr/src/app/entrypoint.sh
 
 # run entrypoint.sh
 ENTRYPOINT [ "/usr/src/app/entrypoint.sh" ]
