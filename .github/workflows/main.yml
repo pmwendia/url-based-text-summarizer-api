@@ -1,0 +1,36 @@
+name: Docker  build and test
+
+on: [push]
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Compose
+        run: |
+          sudo docker-compose  build
+          sudo docker-compose  up -d web-db
+          sudo docker-compose  run web python -m alembic upgrade head
+        working-directory: ./project
+
+      - name: Build Docker Image
+        run: |
+          sudo docker-compose build
+        working-directory: ./project
+
+      - name: Run Tests
+        run: |
+          sudo docker-compose run web python -m pytest .
+        working-directory: ./project
+
+      - name: Lint Code
+        run: |
+          sudo docker-compose  run web python -m flake8 .
+          sudo docker-compose  run web python -m black . --check
+          sudo docker-compose  run web python -m isort . --check-only
+        working-directory: ./project
