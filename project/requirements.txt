@@ -3,7 +3,7 @@ uvicorn==0.13.4
 asyncpg==0.22.0
 tortoise-orm==0.16.21
 pytest==6.2.2
-requests==2.25.1
+requests==2.31.0
 gunicorn==20.0.4
 pytest-cov==2.11.1
 flake8===3.8.4
