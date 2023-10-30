@@ -9,6 +9,8 @@ done
 echo "PostgreSQL started"
 echo "Database is up and running"
 
+python app/db.py
+apt install curl
 # Start the application
 exec "$@"
 
